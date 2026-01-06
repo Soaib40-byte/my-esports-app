@@ -1,0 +1,20 @@
+
+
+body { font-family: sans-serif; background: #121212; color: white; margin: 0; padding: 0; }
+.overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; text-align: center; }
+.login-box { background: #1e1e1e; padding: 30px; border-radius: 15px; }
+header { background: #1e1e1e; padding: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #333; }
+.game-selector { display: flex; gap: 10px; padding: 20px; }
+.game-card { background: #1e1e1e; border-radius: 10px; overflow: hidden; text-align: center; flex: 1; border: 1px solid #444; }
+.game-card img { width: 100%; }
+.match-card { background: #1e1e1e; margin: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #333; }
+.match-thumb { position: relative; }
+.timer { position: absolute; bottom: 5px; right: 5px; background: rgba(0,0,0,0.7); font-size: 12px; padding: 2px 5px; }
+.match-details { padding: 10px; }
+.info-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: #aaa; }
+.join-btn { width: 100%; background: #ff9800; border: none; padding: 10px; color: white; font-weight: bold; border-radius: 5px; }
+.extra-tabs { display: flex; justify-content: space-around; padding: 10px; background: #252525; font-size: 13px; color: #00bcd4; }
+.bottom-nav { position: fixed; bottom: 0; width: 100%; background: #1e1e1e; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
+.modal-content { background: #222; padding: 20px; border-radius: 10px; width: 80%; }
+input { width: 100%; padding: 10px; margin: 10px 0; background: #333; border: 1px solid #444; color: white; }
