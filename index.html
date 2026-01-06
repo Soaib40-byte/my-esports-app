@@ -3,113 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-sports Pro</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Tournament Pro App</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div id="login-screen" class="overlay">
-        <div class="login-box">
-            <h2>Welcome</h2>
-            <p>আপনার টেলিগ্রাম দিয়ে লগিন করুন</p>
-            <button onclick="handleLogin()">Login with Telegram</button>
+
+    <div id="login-screen" class="container">
+        <div class="glass-card login-box">
+            <i class="fab fa-telegram-plane"></i>
+            <h1>Tournament App</h1>
+            <p>লগিন করতে নিচের বাটনে ক্লিক করুন</p>
+            <button class="btn-telegram" onclick="login()">
+                <i class="fab fa-telegram"></i> Login with Telegram
+            </button>
         </div>
     </div>
 
-    <div id="main-app" style="display:none;">
+    <div id="app-ui" class="hidden">
         
-        <header>
-            <div class="user-meta">
-                <span id="user-name">User</span>
-                <div class="balance-top">BDT <span id="top-balance">0.00</span></div>
-            </div>
+        <header class="top-bar">
+            <span id="u-name-top">Player</span>
+            <div class="balance-badge">৳ <span id="top-balance">10</span></div>
         </header>
 
-        <main id="content">
-            <section id="home-page" class="page">
-                <div class="game-selector">
-                    <div class="game-card" onclick="showCategory('ff')">
-                        <img src="https://via.placeholder.com/150x80?text=Free+Fire" alt="FF">
-                        <p>Free Fire</p>
-                    </div>
-                    <div class="game-card coming-soon">
-                        <img src="https://via.placeholder.com/150x80?text=Blood+Strike" alt="BS">
-                        <p>Blood Strike (Soon)</p>
-                    </div>
+        <section id="home-sec" class="container sec">
+            <div class="game-card ff" onclick="showFFSection()">
+                <div class="game-overlay">
+                    <h2>FREE FIRE MAX</h2>
+                    <p>১০টি ম্যাচ লাইভ আছে</p>
                 </div>
-            </section>
+            </div>
+            <div class="game-card bs disabled">
+                <div class="game-overlay">
+                    <h2>BLOOD STRIKE</h2>
+                    <p>Coming Soon</p>
+                </div>
+            </div>
+        </section>
 
-            <section id="ff-category" class="page" style="display:none;">
-                <button class="back-btn" onclick="showPage('home-page')">← Back</button>
-                <div class="tab-menu">
-                    <button class="active" onclick="showMatches('br')">BR Match</button>
-                    <button onclick="alert('CS Match Coming Soon!')">CS Match</button>
-                </div>
-                <div id="match-list">
-                    <div class="match-card">
-                        <div class="match-thumb" onclick="showRules()">
-                            <img src="https://via.placeholder.com/300x120?text=Free+Fire+BR+Solo" alt="Match">
-                            <div class="timer" id="timer">00d 00h 00m 00s</div>
-                        </div>
-                        <div class="match-details">
-                            <h4>BR Solo Match #102</h4>
-                            <div class="info-row">
-                                <span>Entry: 20 BDT</span>
-                                <span>Prize: 40 BDT</span>
-                            </div>
-                            <button id="join-btn-102" class="join-btn" onclick="openJoinModal(102, 20)">Join</button>
-                        </div>
-                        <div class="extra-tabs">
-                            <span onclick="showPrize()">Prize Details</span>
-                            <span onclick="showRoom(102)">Room Details</span>
-                        </div>
+        <section id="ff-sec" class="container sec hidden">
+            <div class="section-header">
+                <i class="fas fa-arrow-left" onclick="showHome()"></i>
+                <h3>BR Solo Matches</h3>
+            </div>
+
+            <div class="match-card">
+                <div class="match-info-box" onclick="showRules()">
+                    <div id="timer" class="timer">00:00:00</div>
+                    <h4>BR SOLO - CLASSIC MAP</h4>
+                    <div class="match-grid">
+                        <span><i class="fas fa-money-bill-wave"></i> এন্ট্রি: ১৳</span>
+                        <span><i class="fas fa-trophy"></i> প্রাইজ: ৪০৳</span>
                     </div>
                 </div>
-            </section>
+                <button id="join-btn" class="btn-join" onclick="handleJoin()">Join Match</button>
+            </div>
+        </section>
 
-            <section id="wallet-page" class="page" style="display:none;">
-                <h3>Wallet</h3>
-                <div class="wallet-stats">
-                    <div class="stat"><span>Deposit</span><p id="dep-bal">0</p></div>
-                    <div class="stat"><span>Won</span><p id="win-bal">0</p></div>
-                </div>
-                <button class="add-money-btn" onclick="showAddMoney()">Add Money</button>
-                <div id="payment-methods" style="display:none;">
-                    <div class="pay-option" onclick="showBkash()">Bkash</div>
-                    <p>Nagad/Rocket (Coming Soon)</p>
-                </div>
-            </section>
-
-            <section id="profile-page" class="page" style="display:none;">
-                <div class="profile-header">
-                    <img id="p-img" src="https://via.placeholder.com/80" alt="Avatar">
-                    <h2 id="p-name">Username</h2>
-                </div>
-                <div class="p-stats">
-                    <div class="p-box">Matches Played: <b id="match-count">0</b></div>
-                    <div class="p-box">Total Won: <b>0 BDT</b></div>
-                </div>
-            </section>
-        </main>
+        <section id="profile-sec" class="container sec hidden">
+            <div class="profile-card glass-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Avatar">
+                <h2 id="full-name">User Name</h2>
+                <p id="tg-username">@telegram_user</p>
+            </div>
+            <div class="stats-container">
+                <div class="stat-item"><span>ম্যাচ খেলেছে</span><b id="m-played">0</b></div>
+                <div class="stat-item"><span>মোট জয়</span><b>৳ 0</b></div>
+            </div>
+        </section>
 
         <nav class="bottom-nav">
-            <div onclick="showPage('home-page')">Home</div>
-            <div onclick="showPage('wallet-page')">Wallet</div>
-            <div onclick="showPage('profile-page')">Profile</div>
+            <div class="nav-item active" id="n-home" onclick="showHome()"><i class="fas fa-home"></i><span>Home</span></div>
+            <div class="nav-item" id="n-wallet" onclick="showWallet()"><i class="fas fa-wallet"></i><span>Wallet</span></div>
+            <div class="nav-item" id="n-profile" onclick="showProfile()"><i class="fas fa-user"></i><span>Profile</span></div>
         </nav>
     </div>
 
-    <div id="join-modal" class="modal">
-        <div class="modal-content">
-            <h4>Join Tournament</h4>
-            <input type="text" id="game-name-input" placeholder="Enter In-game Name">
-            <div id="modal-actions">
-                <button onclick="confirmJoin()">Confirm & Pay</button>
-                <button onclick="closeModal()">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

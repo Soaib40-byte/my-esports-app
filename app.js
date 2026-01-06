@@ -1,111 +1,85 @@
-
-const tg = window.Telegram.WebApp;
-tg.expand();
-
-let balance = 0;
+let balance = 10;
 let matchesPlayed = 0;
-let hasJoined = false;
+let isJoined = false;
 
-// ১. লগিন হ্যান্ডেল (একবার দেখাবে)
-if (localStorage.getItem("isLoggedIn")) {
-    document.getElementById("login-screen").style.display = "none";
-    document.getElementById("main-app").style.display = "block";
-    loadUserData();
+// লগইন চেক (Local Storage ব্যবহার করা হয়েছে যাতে বারবার লগইন না লাগে)
+function login() {
+    localStorage.setItem('userLoggedIn', 'true');
+    checkStatus();
 }
 
-function handleLogin() {
-    localStorage.setItem("isLoggedIn", true);
-    document.getElementById("login-screen").style.display = "none";
-    document.getElementById("main-app").style.display = "block";
-    loadUserData();
-}
-
-function loadUserData() {
-    const user = tg.initDataUnsafe?.user;
-    document.getElementById("user-name").innerText = user?.first_name || "Gamer";
-    document.getElementById("p-name").innerText = user?.username || user?.first_name;
-}
-
-// ২. পেজ নেভিগেশন
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    document.getElementById(pageId).style.display = 'block';
-}
-
-function showCategory(type) {
-    if(type === 'ff') showPage('ff-category');
-}
-
-// ৩. জয়েনিং লজিক
-let currentMatchFee = 0;
-function openJoinModal(id, fee) {
-    if(hasJoined) return;
-    currentMatchFee = fee;
-    document.getElementById("join-modal").style.display = "flex";
-}
-
-function confirmJoin() {
-    const pName = document.getElementById("game-name-input").value;
-    if(pName.length < 3) return alert("সঠিক নাম দিন");
-    
-    if(balance < currentMatchFee) {
-        alert("আপনার ব্যালেন্স নেই! দয়া করে ডিপোজিট করুন।");
-        return;
+function checkStatus() {
+    if (localStorage.getItem('userLoggedIn') === 'true') {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-ui').classList.remove('hidden');
+        startTimer();
     }
+}
 
-    // এডমিন পেন্ডিং লজিক (সিমুলেশন)
-    alert("আপনার জয়েনিং রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হয়েছে (Pending)");
-    document.getElementById("join-modal").style.display = "none";
-    
-    // মনে করুন অ্যাডমিন এপ্রুভ করেছে (লজিক অনুযায়ী)
-    document.getElementById("join-btn-102").innerText = "JOINED";
-    document.getElementById("join-btn-102").style.background = "grey";
-    hasJoined = true;
-    balance -= currentMatchFee;
-    matchesPlayed++;
-    updateUI();
+// নেভিগেশন কন্ট্রোল
+function showHome() { hideSections(); document.getElementById('home-sec').classList.remove('hidden'); setActiveNav('n-home'); }
+function showFFSection() { hideSections(); document.getElementById('ff-sec').classList.remove('hidden'); }
+function showProfile() { hideSections(); document.getElementById('profile-sec').classList.remove('hidden'); setActiveNav('n-profile'); }
+
+function hideSections() {
+    document.querySelectorAll('.sec').forEach(section => section.classList.add('hidden'));
+}
+
+function setActiveNav(id) {
+    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// জয়েন করার লজিক
+function handleJoin() {
+    if (isJoined) return;
+
+    let ign = prompt("আপনার গেমের নাম (In-Game Name) লিখুন:");
+    if (!ign) return;
+
+    if (balance >= 1) {
+        if (confirm(`নাম: ${ign}\nএন্ট্রি ফি ১ টাকা কাটা হবে। আপনি কি নিশ্চিত?`)) {
+            balance -= 1;
+            updateUI();
+            
+            // জয়েন হওয়ার প্রসেস (সিমুলেশন)
+            let btn = document.getElementById('join-btn');
+            btn.innerText = "পেন্ডিং (Wait Approval)";
+            btn.style.background = "#ffa502";
+
+            setTimeout(() => {
+                alert("এডমিন আপনার রিকোয়েস্ট এপ্রুভ করেছে!");
+                isJoined = true;
+                matchesPlayed++;
+                btn.innerText = "JOINED ✅";
+                btn.style.background = "#747d8c";
+                btn.disabled = true;
+                updateUI();
+            }, 3000); // ৩ সেকেন্ড পর এপ্রুভ হবে
+        }
+    } else {
+        alert("ব্যালেন্স নেই! দয়া করে ওয়ালেটে টাকা যোগ করুন।");
+    }
 }
 
 function updateUI() {
-    document.getElementById("top-balance").innerText = balance;
-    document.getElementById("dep-bal").innerText = balance;
-    document.getElementById("match-count").innerText = matchesPlayed;
+    document.getElementById('top-balance').innerText = balance;
+    document.getElementById('m-played').innerText = matchesPlayed;
 }
 
-// ৪. রুম ডিটেইলস (শুধু জয়েন করা ইউজারদের জন্য)
-function showRoom(id) {
-    if(hasJoined) {
-        alert("Room ID: 556677, Pass: 1234");
-    } else {
-        alert("ম্যাচে জয়েন করলেই রুম ডিটেইলস দেখতে পাবেন!");
-    }
+function showRules() {
+    alert("রুলস:\n১. হ্যাক ব্যবহার নিষিদ্ধ।\n২. টিম আপ করা যাবে না।\n৩. প্রাইজ মানি সরাসরি ওয়ালেটে যাবে।");
 }
 
-// ৫. ওয়ালেট লজিক
-function showAddMoney() {
-    document.getElementById("payment-methods").style.display = "block";
-}
-
-function showBkash() {
-    const trx = prompt("বিকাশ নাম্বার: 017XXXXXXXX এ ২০ টাকা পাঠিয়ে TrxID দিন:");
-    if(trx) {
-        alert("আপনার ট্রানজ্যাকশনটি পেন্ডিং আছে। অ্যাডমিন চেক করে ব্যালেন্স অ্যাড করে দিবে।");
-    }
-}
-
-function closeModal() { document.getElementById("join-modal").style.display = "none"; }
-
-// ৬. টাইম কাউন্টডাউন (Simple)
+// টাইমার
 function startTimer() {
-    let countDownDate = new Date().getTime() + 86400000; // ২৪ ঘণ্টা পর
-    setInterval(function() {
-        let now = new Date().getTime();
-        let distance = countDownDate - now;
-        let h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        let s = Math.floor((distance % (1000 * 60)) / 1000);
-        document.getElementById("timer").innerHTML = h + "h " + m + "m " + s + "s ";
+    let timeLeft = 3600; 
+    setInterval(() => {
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        document.getElementById('timer').innerText = `ম্যাচ শুরু: ${m}:${s < 10 ? '0'+s : s}`;
+        if(timeLeft > 0) timeLeft--;
     }, 1000);
 }
-startTimer();
 
+window.onload = checkStatus;
